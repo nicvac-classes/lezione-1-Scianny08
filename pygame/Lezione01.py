@@ -22,10 +22,10 @@ while running:
         x += speed
         
     if keys[pygame.K_DOWN]:
-        y -= speed
+        y += speed
         
     if keys[pygame.K_UP]:
-        y += speed
+        y -= speed
         
     
     screen.fill((30, 30, 50))
