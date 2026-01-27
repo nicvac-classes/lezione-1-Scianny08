@@ -1,4 +1,5 @@
 import pygame
+import sys
 
 pygame.init()
 screen = pygame.display.set_mode((640, 480))
@@ -6,12 +7,15 @@ pygame.display.set_caption("Test Pygame")
 
 x, y = 320, 240
 speed = 5
+clock = pygame.time.Clock()
 
 running = True
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+            pygame.quit()
+            sys.exit()
             
     keys = pygame.key.get_pressed()
     
@@ -33,10 +37,9 @@ while running:
     cerchio = pygame.draw.circle(
         screen,         #surface
         (255, 0, 0),    #colore rgb
-        (x, y),     #x, y
+        (x, y),         #x, y
         30              #raggio
-        )
+    )
+    
     pygame.display.flip()
-    
-    
-    
+    clock.tick(60)
