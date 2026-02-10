@@ -1,3 +1,4 @@
+import random
 import pygame
 import pymunk
 import pymunk.pygame_util
@@ -18,18 +19,37 @@ floor.elasticity = 0.8
 floor.friction = 0.5
 space.add(floor)
 
-# Pallina - body
-mass = 1
-radius = 20
-moment = pymunk.moment_for_circle(mass, 0, radius)
-body = pymunk.Body(mass, moment)
-body.position = (400, 100)
+# Rampa inclinata
+ramp = pymunk.Segment(space.static_body, (0, 400), (300, 500), 5)  # 🆕
+ramp.elasticity = 0.8                                              # 🆕
+ramp.friction = 0.5                                                # 🆕
+space.add(ramp)      
 
-# Pallina - shape
-shape = pymunk.Circle(body, radius)
-shape.elasticity = 0.9
-shape.friction = 0.5
-space.add(body, shape)
+# Parete sinistra
+left_wall = pymunk.Segment(space.static_body, (0, 0), (0, 600), 5)   # 🆕
+left_wall.elasticity = 0.8                                           # 🆕
+left_wall.friction = 0.5                                             # 🆕
+space.add(left_wall)                                                 # 🆕
+
+# Parete destra
+right_wall = pymunk.Segment(space.static_body, (800, 0), (800, 600), 5)  # 🆕
+right_wall.elasticity = 0.8                                              # 🆕
+right_wall.friction = 0.5                                                # 🆕
+space.add(right_wall)                                                    # 🆕
+
+# Funzione per creare una pallina
+def create_ball(pos):
+    mass = 1
+    radius = random.randint(10, 40)                   # 🆕
+    body = pymunk.Body(mass, pymunk.moment_for_circle(mass, 0, radius))
+    body.position = pos
+    shape = pymunk.Circle(body, radius)
+    shape.elasticity = 0.9
+    shape.friction = 0.5
+    space.add(body, shape)
+    return shape
+
+balls = []
 
 # Renderer
 draw_options = pymunk.pygame_util.DrawOptions(screen)
@@ -39,10 +59,26 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            balls.append(create_ball(event.pos))
+        if event.type == pygame.KEYDOWN:              # 🆕
+            if event.key == pygame.K_UP:              # 🆕
+                space.gravity = (0, -900)             # 🆕
+            if event.key == pygame.K_DOWN:            # 🆕
+                space.gravity = (0, 900)              # 🆕
+            if event.key == pygame.K_LEFT:            # 🆕
+                space.gravity = (-900, 0)             # 🆕
+            if event.key == pygame.K_RIGHT:           # 🆕
+                space.gravity = (900, 0)              # 🆕
+        if event.type == pygame.KEYDOWN:              # 🆕
+            if event.key == pygame.K_SPACE:           # 🆕
+                for shape in balls:                   # 🆕
+                    space.remove(shape.body, shape)   # 🆕
+                balls.clear()                         # 🆕
 
     screen.fill((30, 30, 50))
     space.debug_draw(draw_options)
-    space.step(1/60)                                  # 🆕
+    space.step(1/60)
     pygame.display.flip()
     clock.tick(60)
 
